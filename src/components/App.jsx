@@ -1,9 +1,23 @@
 const React = require('react');
+const { connect } = require('react-redux');
+const { bindActionCreators } = require('redux');
+
 const AddChat = require('./AddChat.jsx');
 const ChatList = require('./ChatList.jsx');
 
+const {
+  populateMessages,
+  postMessage,
+} = require('../actions');
+
 const App = React.createClass({
   render() {
+    const {
+      postMessage,
+      populateMessages,
+      messages
+    } = this.props;
+
     return (
       <div className="container">
         <div className="row">
@@ -12,7 +26,7 @@ const App = React.createClass({
             <div className="col-sm-8 col-sm-offset-2">
 
               <AddChat
-                url="https://react-workshop-chat.herokuapp.com/chat"
+                postMessage={postMessage}
               />
 
             </div>
@@ -21,7 +35,8 @@ const App = React.createClass({
               <div className="panel-heading">Chat Messages</div>
 
                 <ChatList
-                  url="https://react-workshop-chat.herokuapp.com/chat"
+                  messages={messages}
+                  populateMessages={populateMessages}
                 />
 
               </div>
@@ -33,4 +48,20 @@ const App = React.createClass({
   }
 });
 
-module.exports = App;
+function mapStateToProps(state) {
+  return {
+    messages: state.messages
+  };
+}
+
+function mapDispatchToProps(dispatch) {
+  return bindActionCreators({
+    populateMessages,
+    postMessage
+  }, dispatch);
+}
+
+module.exports = connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(App);
